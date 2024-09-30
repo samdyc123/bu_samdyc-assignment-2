@@ -1,0 +1,38 @@
+name: Python Application Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Ensure the correct Python version
+
+    - name: Install dependencies
+      run: make install  # This installs all the required dependencies
+
+    - name: Run the Flask app (for grading simulation)
+      run: |
+        make run &  # Run the Flask server in the background
+        sleep 10    # Wait for the server to start up
+      timeout-minutes: 1  # Ensures the server doesn’t run indefinitely
+
+    - name: Verify application is running
+      run: curl --fail http://localhost:3000 || exit 1  # Check if the server is running correctly
+
+    - name: Clean up
+      run: killall flask  # Stop the Flask server after the test

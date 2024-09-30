@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KMeans Visualization</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <h1>KMeans Clustering Visualization</h1>
+    <div>
+        <label for="init-method">Initialization Method:</label>
+        <select id="init-method" onchange="toggleCentroidInput()">
+            <option value="random">Random</option>
+            <option value="farthest">Farthest</option>
+            <option value="k-means++">KMeans++</option>
+            <option value="manual">Manual</option>
+        </select>
+        <div id="manual-centroids" style="display: none;">
+            <label for="centroids">Click on the chart to add centroids:</label>
+        </div>
+        <button onclick="generateData()">Generate Data</button>
+        <button onclick="runKMeans()">Run KMeans</button>
+        <button onclick="stepKMeans()">Step KMeans</button>
+        <button onclick="convergeKMeans()">Converge KMeans</button>
+        <button onclick="resetKMeans()">Reset</button>
+    </div>
+    <div id="chart"></div>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

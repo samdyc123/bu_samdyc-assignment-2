@@ -33,19 +33,26 @@ def kmeans():
         if not centroids or len(centroids) == 0:
             return jsonify({'error': 'No centroids provided for manual initialization'}), 400
         centroids = np.array(centroids)
+        
         if centroids.ndim == 1:
             centroids = centroids.reshape(1, -1)
+        
+        n_clusters = len(centroids)
+        print(f"Number of clusters (manual): {n_clusters}")
+
         kmeans = KMeans(n_clusters=n_clusters, init=centroids, n_init=1)
+    
     elif init_method == 'farthest':
         centroids = initialize_farthest_centroids(data, n_clusters)
         kmeans = KMeans(n_clusters=n_clusters, init=centroids, n_init=1)
+    
     else:
         kmeans = KMeans(n_clusters=n_clusters, init=init_method, n_init=10)
-
+    
     kmeans.fit(data)
     centroids = kmeans.cluster_centers_.tolist()
     labels = kmeans.labels_.tolist()
-
+    
     return jsonify({'centroids': centroids, 'labels': labels})
 
 

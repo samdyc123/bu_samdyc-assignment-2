@@ -9,6 +9,11 @@ document.getElementById('init-method').addEventListener('change', function() {
     toggleCentroidInput();
 });
 
+document.getElementById('num-clusters').addEventListener('input', function() {
+    nClusters = parseInt(this.value);
+    resetKMeans();
+});
+
 function generateData() {
     fetch('/generate_data?num_points=100')
         .then(response => response.json())
@@ -18,6 +23,33 @@ function generateData() {
         });
 }
 
+// function drawChart(data) {
+//     d3.select("#chart").selectAll("*").remove();
+//
+//     const svg = d3.select("#chart").append("svg")
+//         .attr("width", 600)
+//         .attr("height", 400);
+//
+//     svg.selectAll("circle")
+//         .data(data)
+//         .enter().append("circle")
+//         .attr("cx", d => d[0] * 600)
+//         .attr("cy", d => d[1] * 400)
+//         .attr("r", 5);
+//
+//     if (initMethod === 'manual') {
+//         svg.on("click", function(event) {
+//             const [x, y] = d3.pointer(event);
+//             manualCentroids.push([x / 600, y / 400]);
+//             svg.append("rect")
+//                 .attr("x", x - 5)
+//                 .attr("y", y - 5)
+//                 .attr("width", 10)
+//                 .attr("height", 10)
+//                 .attr("fill", "red");
+//         });
+//     }
+// }
 function drawChart(data) {
     d3.select("#chart").selectAll("*").remove();
 
@@ -34,14 +66,16 @@ function drawChart(data) {
 
     if (initMethod === 'manual') {
         svg.on("click", function(event) {
-            const [x, y] = d3.pointer(event);
-            manualCentroids.push([x / 600, y / 400]);
-            svg.append("rect")
-                .attr("x", x - 5)
-                .attr("y", y - 5)
-                .attr("width", 10)
-                .attr("height", 10)
-                .attr("fill", "red");
+            if (manualCentroids.length < nClusters) { // 修改这一行
+                const [x, y] = d3.pointer(event);
+                manualCentroids.push([x / 600, y / 400]);
+                svg.append("rect")
+                    .attr("x", x - 5)
+                    .attr("y", y - 5)
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .attr("fill", "red");
+            }
         });
     }
 }
@@ -142,6 +176,47 @@ function resetKMeans() {
 }
 
 // 初始化质心
+// function initializeCentroids(method, k, data) {
+//     let centroids = [];
+//     if (method === 'random') {
+//         for (let i = 0; i < k; i++) {
+//             centroids.push(data[Math.floor(Math.random() * data.length)]);
+//         }
+//     } else if (method === 'k-means++') {
+//         centroids = [data[Math.floor(Math.random() * data.length)]];
+//         while (centroids.length < k) {
+//             let distances = data.map(point => Math.min(...centroids.map(c => euclideanDistance(point, c))));
+//             let sumDistances = distances.reduce((a, b) => a + b, 0);
+//             let r = Math.random() * sumDistances;
+//             let cumulative = 0;
+//             for (let i = 0; i < distances.length; i++) {
+//                 cumulative += distances[i];
+//                 if (cumulative >= r) {
+//                     centroids.push(data[i]);
+//                     break;
+//                 }
+//             }
+//         }
+//     } else if (method === 'farthest') {
+//         centroids = [data[Math.floor(Math.random() * data.length)]];
+//         while (centroids.length < k) {
+//             let maxDist = 0;
+//             let farthestPoint = null;
+//             for (let point of data) {
+//                 let minDist = Math.min(...centroids.map(c => euclideanDistance(point, c)));
+//                 if (minDist > maxDist) {
+//                     maxDist = minDist;
+//                     farthestPoint = point;
+//                 }
+//             }
+//             centroids.push(farthestPoint);
+//         }
+//     } else if (method === 'manual') {
+//         return manualCentroids;
+//     }
+//     return centroids;
+// }
+
 function initializeCentroids(method, k, data) {
     let centroids = [];
     if (method === 'random') {

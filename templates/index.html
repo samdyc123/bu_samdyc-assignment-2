@@ -19,6 +19,11 @@
         <div id="manual-centroids" style="display: none;">
             <label for="centroids">Click on the chart to add centroids:</label>
         </div>
+        <div>
+    <label for="num-clusters">Number of Clusters:</label>
+    <input type="number" id="num-clusters" value="3" min="1">
+</div>
+
         <button onclick="generateData()">Generate Data</button>
         <button onclick="runKMeans()">Run KMeans</button>
         <button onclick="stepKMeans()">Step KMeans</button>
